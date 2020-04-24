@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-<!-- <div id="elo">
+<div id="elo">
     <div style="display: inline-grid;">
         <label>Dodaj swój plik</label>
         <input type='file' accept='text/plain' onchange='openFile(event)'><br>
@@ -25,13 +25,61 @@
         <label>Lub rozpocznij z domyślnymi wartościami</label>
         <button onclick="startW()">Rozpocznij</button>
     </div>
-</div> -->
-    <canvas id="canvas"></canvas>
+</div>
+<div style="display: none;" id="pomoce">
+    <div>
+        <button style="width: 30px" onclick="scale(2, 2, 2)">+</button>
+        <label> Przybliż</label>
+        <br>
+        <button style="width: 30px" onclick="scale(0.5, 0.5, 0.5)">-</button>
+        <label> Oddal</label>
+    </div>
+</div>
+    <canvas style="display: none;" id="canvas"></canvas>
     <script>
+        var tekscik;
+        var nodes = [];
+        var openFile = function(event) {
+        var input = event.target;
+
+        var reader = new FileReader();
+        reader.onload = function(){
+          var text = reader.result;
+          tekscik = text;
+          tekscik = tekscik.replace(/(\r\n|\n|\r|\s)/gm, "");
+          var l = tekscik.split(";")
+          var node = document.getElementById('output');
+          node.innerText = text;
+            if(tekscik.length != 0){
+                var tab = tekscik.split(",");
+                for(var x = 0; x < 8; x++){
+                    var index;
+                    var n = [];
+                    for(var y = 0; y < 3; y++){
+                        if(y == 0 && x == 0){
+                            n.push(parseInt(tab[0].substr(2,)));
+                        }
+                        else if(y == 2 && x == 7){
+                            n.push(parseInt(tab[3*x + y].substr(0,tab[3*x + y].length - 2)));
+                        }
+                        else if(y == 0){
+                            n.push(parseInt(tab[3*x + y].substr(1,)));
+                        }
+                        else if(y == 2){
+                            n.push(parseInt(tab[3*x + y].substr(0,tab[3*x + y].length - 1)));
+                        }
+                        else{
+                            n.push(parseInt(tab[3*x + y]));
+                        }
+                    }
+                    nodes.push(n);
+                }
+            }
+        };
+        reader.readAsText(input.files[0]);
+      };
 
         var canvas = document.querySelector("canvas");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
  
         var g = canvas.getContext("2d");
 
@@ -47,8 +95,6 @@
             rotateCuboid(incrX, incrY);
         });
 
-        var nodes = [[-1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, 1, 1],
-        [1, -1, -1], [1, -1, 1], [1, 1, -1], [1, 1, 1]];
 
         var faces= [[0, 1, 3, 2], [1, 0, 4, 5],
                 [0, 2, 6, 4], [3, 1, 5, 7],
@@ -61,9 +107,20 @@
         var lightVector =[0.5, -0.2, -2];
         var backgroundLight = 0.1;
 
-        $( document ).ready(function() {
+        function startW(){
+            document.getElementById("elo").style.display = "none";
+            document.getElementById("pomoce").style.display = "unset";
+            document.getElementById("canvas").style.display = "unset";
+            var canvas = document.querySelector("canvas");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            if(nodes.length == 0){
+                nodes = [[-100, -100, -100], [-100, -100, 100], [-100, 100, -100], [-100, 100, 100],
+        [100, -100, -100], [100, -100, 100], [100, 100, -100], [100, 100, 100]];
+            }
             draw();
-        });
+        }
 
         function createCuboid(x, y, z, w, h, d){
             nodes = [[x, y, z ], [x, y, z+d], [x, y+h, z ], [x, y+h, z+d], [x+w, y, z ], [x+w, y, z+d], [x+w, y+h, z ], [x+w, y+h, z+d]];
@@ -74,6 +131,7 @@
                 node[1] *= factor1;
                 node[2] *= factor2;
             });
+            draw();
         }
         function rotateCuboid(angleX, angleY) {
  
@@ -207,8 +265,6 @@
             g.stroke();
             g.restore();
         }
-        scale(80, 120, 160);
-        rotateCuboid(Math.PI / 5, Math.PI / 9);
     </script>
 </body> 
 </html>
