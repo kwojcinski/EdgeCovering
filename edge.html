@@ -9,7 +9,7 @@
 			  crossorigin="anonymous"></script>
     <style>
         canvas {
-            background-color: black;
+            background-color: white;
         }
 
     </style>
@@ -56,9 +56,14 @@
 
         var mouseX = 0, prevMouseX, mouseY = 0, prevMouseY;
 
+        var BLACK = "000000";
+        var faceColor = "#00BFFF";
+        var lightVector =[0.5, -0.2, -2];
+        var backgroundLight = 0.1;
+
         $( document ).ready(function() {
-    draw();
-});
+            draw();
+        });
 
         function createCuboid(x, y, z, w, h, d){
             nodes = [[x, y, z ], [x, y, z+d], [x, y+h, z ], [x, y+h, z+d], [x+w, y, z ], [x+w, y, z+d], [x+w, y+h, z ], [x+w, y+h, z+d]];
@@ -100,6 +105,11 @@
                     [v1[2] - v2[2]]];
         };
 
+        var normaliseVector = function(v) {
+            var d = Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
+            return [v[0]/d, v[1]/d, v[2]/d];
+        };
+
         var normalOfPlane = function(face, nodes) {
             var n1 = nodes[face[0]];
             var n2 = nodes[face[1]];
@@ -114,28 +124,77 @@
                     
             return v3;
         };
+
+        var dotProduct = function(v1, v2){
+            // Assume everything has 3 dimensions
+            return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+        };
+
+        function lerpColor(a, b, amount) { 
+
+            var ah = parseInt(a.replace(/#/g, ''), 16),
+                ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+                bh = parseInt(b.replace(/#/g, ''), 16),
+                br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+                rr = ar + amount * (br - ar),
+                rg = ag + amount * (bg - ag),
+                rb = ab + amount * (bb - ab);
+
+            return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
+        }
+
+        lightVector = normaliseVector(lightVector);
+
         function draw(){
             g.save();
  
             g.clearRect(0, 0, canvas.width, canvas.height);
             g.translate(canvas.width / 2, canvas.height / 2);
-            g.beginPath();
-            g.strokeStyle = "#FFFFFF";
             for (var f in faces) {
                 face = faces[f];
                 var fnorm = normalOfPlane(face, nodes);
                 
                 if (fnorm[2] < 0) {
+                    var l = Math.max(0, dotProduct(lightVector, normaliseVector(fnorm)));
+                    l = backgroundLight + (1 - backgroundLight) * l;
+                    var c = lerpColor(BLACK, faceColor, l);
+                    g.fillStyle = c;
                       
                     if (face.length === 3) {
                         
+                        g.beginPath();
+                        g.moveTo(nodes[face[0]][0], nodes[face[0]][1]);
+                        g.lineTo(nodes[face[1]][0], nodes[face[1]][1]);
+                        g.lineTo(nodes[face[2]][0], nodes[face[2]][1]);
+                        g.lineTo(nodes[face[0]][0], nodes[face[0]][1]);
+                        g.closePath();
+                        g.fill();
+                    } else {
+                        g.beginPath();
+                        g.moveTo(nodes[face[0]][0], nodes[face[0]][1]);
+                        g.lineTo(nodes[face[1]][0], nodes[face[1]][1]);
+                        g.lineTo(nodes[face[2]][0], nodes[face[2]][1]);
+                        g.lineTo(nodes[face[3]][0], nodes[face[3]][1]);
+                        g.lineTo(nodes[face[0]][0], nodes[face[0]][1]);
+                        g.closePath();
+                        g.fill();
+                    }
+                }
+            }
+            g.beginPath();
+            g.strokeStyle = "black";
+            for (var f in faces) {
+                face = faces[f];
+                var fnorm = normalOfPlane(face, nodes);
+                
+                if (fnorm[2] < 0) {
+                    if (face.length === 3) {
                         
                         g.moveTo(nodes[face[0]][0], nodes[face[0]][1]);
                         g.lineTo(nodes[face[1]][0], nodes[face[1]][1]);
                         g.lineTo(nodes[face[2]][0], nodes[face[2]][1]);
                         g.lineTo(nodes[face[0]][0], nodes[face[0]][1]);
                     } else {
-                        g.strokeStyle = "#FFFFFF";
                         g.moveTo(nodes[face[0]][0], nodes[face[0]][1]);
                         g.lineTo(nodes[face[1]][0], nodes[face[1]][1]);
                         g.lineTo(nodes[face[2]][0], nodes[face[2]][1]);
