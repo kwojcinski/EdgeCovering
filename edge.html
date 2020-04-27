@@ -11,18 +11,98 @@
         canvas {
             background-color: white;
         }
+        img {
+            height: 200px;
+            width: 200px;
+        }
+        .input-hidden {
+            position: absolute;
+            left: -9999px;
+        }
+
+        input[type=radio]:checked + label>img {
+            border: 1px solid #fff;
+            box-shadow: 0 0 3px 3px #090;
+        }
+
+        /* Stuff after this is only to make things more pretty */
+        input[type=radio] + label>img {
+            width: 150px;
+            height: 150px;
+            transition: 500ms all;
+        }
+
+        input[type=radio]:checked + label>img {
+            transform: 
+            rotateZ(-10deg) 
+            rotateX(10deg);
+        }
 
     </style>
 </head>
 <body>
-<div id="elo">
+<div id="elo" style="margin-left: 10px">
     <div style="display: inline-grid;">
+    <div id="wlasnyPlik">
+        <div style="display: inline-grid;">
         <label>Dodaj swój plik</label>
         <input type='file' accept='text/plain' onchange='openFile(event)'><br>
+    </div>
     <div id='output'>
     ...
     </div>
-        <label>Lub rozpocznij z domyślnymi wartościami</label>
+        <label>Lub wybierz obiekt z poniższych</label>
+</div >
+        <div style="margin-bottom: 20px; margin-top: 20px;">
+            <input 
+                value="plik"
+                type="radio" name="obiekt" 
+                id="plik" class="input-hidden" />
+            <label for="plik">
+            <img 
+                src="plik.png" 
+                alt="I'm sad" />
+            </label>
+            <input 
+                value="cuboid"
+                type="radio" name="obiekt" 
+                id="cuboid" class="input-hidden" />
+            <label for="cuboid">
+            <img 
+                src="cuboid.png" 
+                alt="I'm sad" />
+            </label>
+
+            <input 
+                value="figura2"
+                type="radio" name="obiekt"
+                id="figura2" class="input-hidden" />
+            <label for="figura2">
+            <img 
+                src="figura2.png" 
+                alt="I'm happy" />
+            </label>
+
+            <input 
+                value="figura3"
+                type="radio" name="obiekt"
+                id="figura3" class="input-hidden" />
+            <label for="figura3">
+            <img 
+                src="figura3.png" 
+                alt="I'm happy" />
+            </label>
+
+            <input 
+                value="figura4"
+                type="radio" name="obiekt"
+                id="figura4" class="input-hidden" />
+            <label for="figura4">
+            <img 
+                src="figura4.png" 
+                alt="I'm happy" />
+            </label>
+        </div>
         <button onclick="startW()">Rozpocznij</button>
     </div>
 </div>
@@ -37,6 +117,32 @@
 </div>
     <canvas style="display: none;" id="canvas"></canvas>
     <script>
+        jQuery(document).ready(function(){
+            $("#wlasnyPlik").hide();
+            $('input:radio[name="obiekt"]').change(function(){
+                if($(this).val() == 'plik'){
+                    $("#wlasnyPlik").show();
+                }
+                else if($(this).val() == 'figura2'){
+                    createCuboid(-120, -20, -20, 240, 40, 40);
+                    $("#wlasnyPlik").hide();
+                }
+                else if($(this).val() == 'cuboid'){
+                    nodes = [[-100, -100, -100], [-100, -100, 100], [-100, 100, -100], [-100, 100, 100],
+        [100, -100, -100], [100, -100, 100], [100, 100, -100], [100, 100, 100]];
+                    $("#wlasnyPlik").hide();
+                }
+                else if($(this).val() == 'figura3'){
+                    createCuboid(-120, -50, -30, -20, 100, 60);
+                    $("#wlasnyPlik").hide();
+                }
+                else if($(this).val() == 'figura4'){
+                    createCuboid(0, 0, 0, 100, 160, 50);
+                    $("#wlasnyPlik").hide();
+                }
+            });
+
+        });
         var tekscik;
         var nodes = [];
         var openFile = function(event) {
@@ -47,6 +153,7 @@
           var text = reader.result;
           tekscik = text;
           tekscik = tekscik.replace(/(\r\n|\n|\r|\s)/gm, "");
+          nodes = [];
           var l = tekscik.split(";")
           var node = document.getElementById('output');
           node.innerText = text;
