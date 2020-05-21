@@ -18,8 +18,8 @@ var renderer = 0;
 function run() {
   var id = document.getElementById("select_example_id").value;
   //var vertSrc = document.getElementById("code_vert").text;
-  var vertSrc = document.getElementById("GouraudVert").value;
-  var fragSrc = document.getElementById("GouraudFrag").value;
+  var vertSrc = document.getElementById("PhongVert").value;
+  var fragSrc = document.getElementById("PhongFrag").value;
 
   document.getElementById("code_frag").value = fragSrc;
   document.getElementById("code_vert").value = vertSrc;
@@ -80,22 +80,13 @@ function exampleChanged() {
 <tr style="vertical-align:top;">
 <td><canvas id="myWebGLCanvas" width="600" height="400">Your browser does not support the canvas element</canvas><br>
 <select onchange="exampleChanged()" id="select_example_id">
-  <option value="1">Gouraud Shading</option>
-  <option value="2">Phong Shading</option>
+  <option value="1">Phong Shading</option>
 </select>
 <select onchange="modelChanged()" id="select_id2">
-  <option value="./knot.txt">Knot</option>
-  <option value="./cube.txt">Cube</option>
-  <option value="./plane.txt">Plane</option>
   <option value="./sphere.txt">Sphere</option>
-  <option value="./hose.txt">Hose</option>
-  <option value="./teapot.txt">Teapot</option>
 </select>
 <select onchange="modeChanged()" id="select_id">
   <option value="1">normal mode</option>
-  <option value="2">ambient only</option>
-  <option value="3">diffuse only</option>
-  <option value="4">specular only</option>
 </select>
 <button onclick="updateRenderer()">Reload Shader Code</button>
 
@@ -124,7 +115,7 @@ function exampleChanged() {
 </table>
 
 </td>
-<td>
+<td hidden>
 <h3>Vertex Shader</h3>
 <textarea cols="55" rows="40" class="code_input" id="code_vert" wrap="off"></textarea><br>
 <h3>Fragment Shader</h3>
@@ -266,12 +257,6 @@ $('#colorSelectorBg').ColorPicker({
 })
 </script>
 
-<p>Based on a 
-<a href=http://multivis.net/lecture/phong.html>http://multivis.net/lecture/phong.html</a> | 
-<a target="_blank"
-  href="http://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code/WebGLShaderLightMat/ShaderLightMat.html">WebGL applet</a> by <a
-  href="http://www.uni-marburg.de/fb12/grafikmultimedia-en/team/thormae-en" target="_blank">Prof. Thorsten Thorm&auml;hlen</a>.
-  Modified by <a href="http://wwwcg.in.tum.de/group/persons/kehrer.html" target="_blank">Johannes Kehrer</a> for educational purpose.</p>
 
 <textarea id="PhongVert" style="display: none;">
 attribute vec3 position;
