@@ -88,6 +88,12 @@ function exampleChanged() {
 <select onchange="modeChanged()" id="select_id">
   <option value="1">normal mode</option>
 </select>
+<select onchange="setMaterial()" id="material_opt">
+  <option value="wood"> Drewno </option>
+  <option value="metal"> Metal </option>
+  <option value="plastic"> Plastik </option>
+  <option value="wall"> Ściana </option>
+</select>
 <button onclick="updateRenderer()">Reload Shader Code</button>
 
 <table>
@@ -125,6 +131,50 @@ function exampleChanged() {
 </table>
 
 <script>
+
+const woodSettings = {
+  ka : 1,
+  kd : 0.66,
+  ks : 0,
+  shininess : 67
+}
+const metalSettings = {
+  ka : 1,
+  kd : 0.82,
+  ks : 1,
+  shininess : 67
+}
+const plasticSettings = {
+  ka : 1,
+  kd : 0.83,
+  ks : 0.48,
+  shininess : 67
+}
+const wallSettings = {
+  ka : 1,
+  kd : 1,
+  ks : 0,
+  shininess : 67
+}
+const lightPosition = {
+  x : 1,
+  y : 1,
+  z : 3.5
+}
+
+const settingsMap = new Map([
+  ["wood" , woodSettings],
+  ["metal" , metalSettings],
+  ["plastic" , plasticSettings],
+  ["wall" , wallSettings]]
+)
+
+function init() {
+  renderer.ambientColor = [52/256, 25/256, 0/256];
+  renderer.lightPos = [lightPosition.x,lightPosition.y,lightPosition.z];
+}
+
+
 $('#slider-s').slider({value:80, min:1, max:128, step:1, range:"min", slide:updateShininess});
 $('#slider-ka').slider({value:1, max:1, step:0.01, range:"min", slide:updateLightAmbientTerm});
 $('#slider-kd').slider({value:1, max:1, step:0.01, range:"min", slide:updateLightDiffuseTerm});
@@ -132,6 +182,9 @@ $('#slider-ks').slider({value:1, max:1, step:0.01, range:"min", slide:updateLigh
 $('#slider-x').slider({value:1, min:-10, max:10, step:0.1, slide:updateLight, change:updateLight});
 $('#slider-y').slider({value:1, min:-10, max:10, step:0.1, slide:updateLight, change:updateLight});
 $('#slider-z').slider({value:-1, min:-10, max:10, step:0.1, slide:updateLight, change:updateLight});
+
+
+
 
 function updateShininess(event, ui){
   renderer.shininess = ui.value;
@@ -150,39 +203,24 @@ function updateLightDiffuseTerm(event, ui){
 }
 function updateLightSpecularTerm(event, ui){
   renderer.ksVal = ui.value;
+  console.log(typeof(ui.value))
   console.log("ksVal (specular reflection) = " + renderer.ksVal);
   $('#slider-ks-value').html(ui.value);
 }
+function setMaterial() {
+    const material_str = document.getElementById("material_opt").value;
+    const material = settingsMap.get(material_str);
+    renderer.ksVal = material.ks
+    renderer.kdVal = material.kd;
+    renderer.kaVal = material.ka;
+    init()
+    renderer.display();
+}
 
-const woodSettings = {
-  kd : 1,
-  kd : 0.66,
-  ks : 0,
-  shininess : 67
-}
-const metalSettings = {
-  kd : 1,
-  kd : 0.82,
-  ks : 1,
-  shininess : 67
-}
-const plasticSettings = {
-  kd : 1,
-  kd : 0.83,
-  ks : 0.48,
-  shininess : 67
-}
-const wallSettings = {
-  kd : 1,
-  kd : 1,
-  ks : 0,
-  shininess : 67
-}
-const lightPosition = {
-  x : 1,
-  y : 1,
-  z : 3.5
-}
+
+init();
+
+
 
 
 function updateLight(){
