@@ -135,20 +135,55 @@ $('#slider-z').slider({value:-1, min:-10, max:10, step:0.1, slide:updateLight, c
 
 function updateShininess(event, ui){
   renderer.shininess = ui.value;
+  console.log("shininess = " + renderer.shininess);
   $('#slider-s-value').html(ui.value);
 }
 function updateLightAmbientTerm(event, ui){
   renderer.kaVal = ui.value;
+  console.log("kaVal (ambient reflection) = " + renderer.kaVal);
   $('#slider-ka-value').html(ui.value);
 }
 function updateLightDiffuseTerm(event, ui){
   renderer.kdVal = ui.value;
+  console.log("kdVal (diffuse reflection) = " + renderer.kdVal);
   $('#slider-kd-value').html(ui.value);
 }
 function updateLightSpecularTerm(event, ui){
   renderer.ksVal = ui.value;
+  console.log("ksVal (specular reflection) = " + renderer.ksVal);
   $('#slider-ks-value').html(ui.value);
 }
+
+const woodSettings = {
+  kd : 1,
+  kd : 0.66,
+  ks : 0,
+  shininess : 67
+}
+const metalSettings = {
+  kd : 1,
+  kd : 0.82,
+  ks : 1,
+  shininess : 67
+}
+const plasticSettings = {
+  kd : 1,
+  kd : 0.83,
+  ks : 0.48,
+  shininess : 67
+}
+const wallSettings = {
+  kd : 1,
+  kd : 1,
+  ks : 0,
+  shininess : 67
+}
+const lightPosition = {
+  x : 1,
+  y : 1,
+  z : 3.5
+}
+
 
 function updateLight(){
   var x = $('#slider-x').slider("value");
