@@ -5,12 +5,12 @@ function Renderer(canvasName, vertSrc, fragSrc)
   // public member
   this.t = 0.0;
   this.modeVal = 1;
-  this.lightPos = [1.0, 1.0, -1.0];
+  this.lightPos = [1.0, 1.0, 3.5];
   this.lightVec = new Float32Array(3);
   this.ambientColor = [0.2, 0.1, 0.0];
-  this.diffuseColor = [0.8, 0.4, 0.0];
+  this.diffuseColor = [217/256,109/256,0];
   this.specularColor = [1.0, 1.0, 1.0];
-  this.clearColor = [0.0, 0.4, 0.7];
+  this.clearColor = [1,1,1];
   this.attenuation = 0.01;
   this.shininess = 80.0;
   this.kaVal = 1.0;
@@ -35,11 +35,11 @@ function Renderer(canvasName, vertSrc, fragSrc)
   var modelviewLoc = 0;
   var normalMatrixLoc = 0;
   var modeLoc = 0;
-  var kaLoc = 0;
-  var kdLoc = 0;
-  var ksLoc = 0;
+  var kaLoc = 1;
+  var kdLoc = 0.82;
+  var ksLoc = 1;
   var attenuationLoc = 0;
-  var shininessLoc = 0;
+  var shininessLoc = 67;
   var lightPosLoc = 0;
   var lightVecLoc = 0;
   var ambientColorLoc = 0;
